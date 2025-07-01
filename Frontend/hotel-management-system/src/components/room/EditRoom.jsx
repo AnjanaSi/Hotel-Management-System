@@ -44,6 +44,7 @@ const EditRoom = () => {
 
     try {
       const response = await updateRoom(roomId, room);
+      console.log("updaredRoom", room);
       if (response.status === 200) {
         setSuccessMessage("Room updated successfully!");
         const updatedRoomData = await getRoomById(roomId);

@@ -11,6 +11,7 @@ import com.anjana.hotel_management_system.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,13 +19,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class BookedRoomController {
     private final BookedRoomService bookingService;
     private final RoomService roomService;
 
     @GetMapping("/all-bookings")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<BookingResponse>> getAllBookings(){
         List<BookedRoom> bookings = bookingService.getAllBookings();
         List<BookingResponse> bookingResponses = new ArrayList<>();
@@ -59,8 +60,21 @@ public class BookedRoomController {
         }
     }
 
+    @GetMapping("/user/{email}/bookings")
+    public ResponseEntity<List<BookingResponse>> getBookingsByUserEmail(@PathVariable String email) {
+        List<BookedRoom> bookings = bookingService.getBookingsByUserEmail(email);
+        List<BookingResponse> bookingResponses = new ArrayList<>();
+        for (BookedRoom booking : bookings) {
+            BookingResponse bookingResponse = getBookingResponse(booking);
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok(bookingResponses);
+    }
+
+
     @DeleteMapping("/booking/{bookingId}/delete")
-    public void cancelBooking(@PathVariable Long bookingId){
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #email == principal.username)")
+    public void cancelBooking(@PathVariable Long bookingId,@RequestParam String email){
         bookingService.cancelBooking(bookingId);
     }
 

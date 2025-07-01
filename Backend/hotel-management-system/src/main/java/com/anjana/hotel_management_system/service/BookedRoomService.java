@@ -17,4 +17,6 @@ public interface BookedRoomService {
     BookedRoom  findByBookingConfirmationCode(String confirmationCode);
 
     void cancelBooking(Long bookingId);
+
+    List<BookedRoom> getBookingsByUserEmail(String email);
 }

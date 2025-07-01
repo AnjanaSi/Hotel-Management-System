@@ -65,6 +65,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes){
+        System.out.println("type"+roomType+"\nprice"+roomPrice);
         Room room = roomRepository.findById(roomId).get();
         if (roomType != null) room.setRoomType(roomType);
         if (roomPrice != null) room.setRoomPrice(roomPrice);

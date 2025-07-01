@@ -35,7 +35,7 @@ const FindBooking = () => {
     guestEmail: "",
     numOfAdults: "",
     numOfChildren: "",
-    totalNumOfGuests: "",
+    totalNumOfguests: "",
   };
   const [isDeleted, setIsDeleted] = useState(false);
 
@@ -49,6 +49,7 @@ const FindBooking = () => {
 
     try {
       const data = await getBookingByConfirmationCode(confirmationCode);
+      console.log("booking info ffff", data);
       setBookingInfo(data);
       setError(null);
     } catch (error) {
@@ -63,9 +64,9 @@ const FindBooking = () => {
     setTimeout(() => setIsLoading(false), 2000);
   };
 
-  const handleBookingCancellation = async (bookingId) => {
+  const handleBookingCancellation = async (bookingId, userEmail) => {
     try {
-      await cancelBooking(bookingId);
+      await cancelBooking(bookingId, userEmail);
       setIsDeleted(true);
       setSuccessMessage("Booking has been cancelled successfully!");
       setBookingInfo(emptyBookingInfo);
@@ -78,10 +79,6 @@ const FindBooking = () => {
       setSuccessMessage("");
       setIsDeleted(false);
     }, 2000);
-  };
-
-  const calculateTotalNumOfGuests = (adults, children) => {
-    return adults + children;
   };
 
   return (
@@ -126,7 +123,7 @@ const FindBooking = () => {
             </p>
             <p>
               Check-out Date:{" "}
-              {moment(bookingInfo.checkInDate)
+              {moment(bookingInfo.checkOutDate)
                 .subtract(1, "month")
                 .format("MMM Do, YYYY")}
             </p>
@@ -134,17 +131,16 @@ const FindBooking = () => {
             <p>Email Address: {bookingInfo.guestEmail}</p>
             <p>Adults: {bookingInfo.numOfAdults}</p>
             <p>Children: {bookingInfo.numOfChildren}</p>
-            <p>
-              Total Guests:
-              {` ${calculateTotalNumOfGuests(
-                bookingInfo.numOfAdults,
-                bookingInfo.numOfChildren
-              )}`}
-            </p>
+            <p>Total Guests:{bookingInfo.totalNumOfguests}</p>
 
             {!isDeleted && (
               <button
-                onClick={() => handleBookingCancellation(bookingInfo.bookingId)}
+                onClick={() =>
+                  handleBookingCancellation(
+                    bookingInfo.bookingId,
+                    bookingInfo.guestEmail
+                  )
+                }
                 className="btn btn-danger"
               >
                 Cancel Booking
