@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  backend:
+    image: anjanasi/hotel-ms-backend:v3
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hotel_management_system_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql
+
+  frontend:
+    image: anjanasi/hotel-ms-frontend:v4
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: hotel_management_system_db
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/hotel_db_dump.sql:/docker-entrypoint-initdb.d/hotel_db_dump.sql
